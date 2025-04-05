@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Neha">
+
+<title>Retail Data Analysis and Business Insights Using R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Retail-Data-Analysis-R_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Retail-Data-Analysis-R_files/libs/quarto-html/quarto.js"></script>
+<script src="Retail-Data-Analysis-R_files/libs/quarto-html/popper.min.js"></script>
+<script src="Retail-Data-Analysis-R_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Retail-Data-Analysis-R_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Retail-Data-Analysis-R_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Retail-Data-Analysis-R_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Retail-Data-Analysis-R_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Retail-Data-Analysis-R_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Retail-Data-Analysis-R_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="Retail-Data-Analysis-R_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="Retail-Data-Analysis-R_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="Retail-Data-Analysis-R_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Retail Data Analysis and Business Insights Using R</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Neha </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This analysis explores key business insights using the Superstore Sales Dataset. The approach includes data preprocessing, exploratory analysis, predictive modeling, and visualization to extract meaningful patterns. Key focus areas include profitability analysis, sales forecasting, and delivery performance evaluation. Using multiple linear regression, ARIMA and logistic regression, we derive actionable insights to optimize pricing, improve demand planning, refine customer targeting, and enhance delivery efficiency.</p>
+</section>
+<section id="approach" class="level2">
+<h2 class="anchored" data-anchor-id="approach">Approach</h2>
+<p>Mermaid flowchart</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD;
+A[Start] --&gt; B[Load Required Libraries]
+    B --&gt; C[Read Dataset - Superstore.csv]
+    C --&gt; D[Data Preprocessing:Convert Dates,Handle Missing Values]
+    
+    %% Four Key Analysis Questions after Preprocessing
+    D --&gt; Q1[Impact of Sales &amp; Discount on Profit]
+    Q1 --&gt; Q1a[Descriptive Statistics]
+    Q1a --&gt; Q1b[Multiple Linear Regression]
+    Q1b --&gt; Q1c[Visualizations: Scatter Plot, Boxplot, Trendline]
+
+    D --&gt; Q2[Sales Forecasting]
+    Q2 --&gt; Q2a[Aggregate Monthly Sales]
+    Q2a --&gt; Q2b[Time-Series Decomposition]
+    Q2b --&gt; Q2c[ARIMA Model Forecasting]
+    Q2c --&gt; Q2d[Plot Forecast &amp; Trends]
+    
+    D --&gt; Q4[Delivery Time Performance]
+    Q4 --&gt; Q4a[Calculate Delivery Days]
+    Q4a --&gt; Q4b[Define Delayed vs On-Time]
+    Q4b --&gt; Q4c[Logistic Regression]
+    Q4c --&gt; Q4d[Visualization: Bar Chart, Density Plot]
+
+    %% Business Insights After All Analyses
+    Q1c --&gt; I[Business Insights &amp; Recommendations]
+    Q2d --&gt; I
+    Q4d --&gt; I
+
+ 
+    I --&gt; J[End]
+
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="dataset-overview" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-overview">Dataset Overview</h2>
+<p>The “Superstore” dataset is chosen because it represents real-world retail sales data, allowing us to analyze profitability, sales trends, and delivery performance.These insights are essential for businesses to optimize pricing strategies, improve marketing efforts, enhance logistics efficiency, and drive better decision-making.</p>
+<p>Datasetlink: <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Superstore Dataset on Kaggle</a></p>
+</section>
+<section id="loading-required-libraries" class="level1">
+<h1>Loading required libraries</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Data manipulation &amp; visualization</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)     <span class="co"># For reading CSV files</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># For handling dates</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)   <span class="co"># Data visualization</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)     <span class="co"># Data visualization</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)    <span class="co"># For advanced visualizations</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forecast)  <span class="co"># Time series forecasting</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co"># For arranging multiple plots</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reading-the-dataset-csv-file" class="level1">
+<h1>Reading the dataset (CSV file)</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  superstore <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"C:/Users/Neha/Downloads/resume folder/Retail-Data-Analysis-R/Sample - Superstore for R.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 9994 Columns: 21
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (16): Order ID, Order Date, Ship Date, Ship Mode, Customer ID, Customer ...
+dbl  (5): Row ID, Sales, Quantity, Discount, Profit
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="view-first-few-rows" class="level1">
+<h1>View first few rows</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(superstore)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 21
+  `Row ID` `Order ID`     `Order Date` `Ship Date` `Ship Mode`    `Customer ID`
+     &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;        
+1        1 CA-2016-152156 11/8/2016    11/11/2016  Second Class   CG-12520     
+2        2 CA-2016-152156 11/8/2016    11/11/2016  Second Class   CG-12520     
+3        3 CA-2016-138688 6/12/2016    6/16/2016   Second Class   DV-13045     
+4        4 US-2015-108966 10/11/2015   10/18/2015  Standard Class SO-20335     
+5        5 US-2015-108966 10/11/2015   10/18/2015  Standard Class SO-20335     
+6        6 CA-2014-115812 6/9/2014     6/14/2014   Standard Class BH-11710     
+# ℹ 15 more variables: `Customer Name` &lt;chr&gt;, Segment &lt;chr&gt;, Country &lt;chr&gt;,
+#   City &lt;chr&gt;, State &lt;chr&gt;, `Postal Code` &lt;chr&gt;, Region &lt;chr&gt;,
+#   `Product ID` &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
+#   `Product Name` &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
+#   Profit &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="check-column-names" class="level1">
+<h1>Check column names</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(superstore)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Row ID"        "Order ID"      "Order Date"    "Ship Date"    
+ [5] "Ship Mode"     "Customer ID"   "Customer Name" "Segment"      
+ [9] "Country"       "City"          "State"         "Postal Code"  
+[13] "Region"        "Product ID"    "Category"      "Sub-Category" 
+[17] "Product Name"  "Sales"         "Quantity"      "Discount"     
+[21] "Profit"       </code></pre>
+</div>
+</div>
+</section>
+<section id="check-summary-statistics" class="level1">
+<h1>Check summary statistics</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(superstore)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Row ID       Order ID          Order Date         Ship Date        
+ Min.   :   1   Length:9994        Length:9994        Length:9994       
+ 1st Qu.:2499   Class :character   Class :character   Class :character  
+ Median :4998   Mode  :character   Mode  :character   Mode  :character  
+ Mean   :4998                                                           
+ 3rd Qu.:7496                                                           
+ Max.   :9994                                                           
+  Ship Mode         Customer ID        Customer Name        Segment         
+ Length:9994        Length:9994        Length:9994        Length:9994       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   Country              City              State           Postal Code       
+ Length:9994        Length:9994        Length:9994        Length:9994       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    Region           Product ID          Category         Sub-Category      
+ Length:9994        Length:9994        Length:9994        Length:9994       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+ Product Name           Sales              Quantity        Discount     
+ Length:9994        Min.   :    0.444   Min.   : 1.00   Min.   :0.0000  
+ Class :character   1st Qu.:   17.280   1st Qu.: 2.00   1st Qu.:0.0000  
+ Mode  :character   Median :   54.490   Median : 3.00   Median :0.2000  
+                    Mean   :  229.858   Mean   : 3.79   Mean   :0.1562  
+                    3rd Qu.:  209.940   3rd Qu.: 5.00   3rd Qu.:0.2000  
+                    Max.   :22638.480   Max.   :14.00   Max.   :0.8000  
+     Profit         
+ Min.   :-6599.978  
+ 1st Qu.:    1.729  
+ Median :    8.666  
+ Mean   :   28.657  
+ 3rd Qu.:   29.364  
+ Max.   : 8399.976  </code></pre>
+</div>
+</div>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
+<p>Handling Missing Values, Converting Dates (Order Date, Ship Date). Creating columns for delivery days, categorizing discounts, etc.</p>
+</section>
+</section>
+<section id="check-for-missing-values" class="level1">
+<h1>Check for missing values</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(superstore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Row ID      Order ID    Order Date     Ship Date     Ship Mode 
+            0             0             0             0             0 
+  Customer ID Customer Name       Segment       Country          City 
+            0             0             0             0             0 
+        State   Postal Code        Region    Product ID      Category 
+            0             0             0             0             0 
+ Sub-Category  Product Name         Sales      Quantity      Discount 
+            0             0             0             0             0 
+       Profit 
+            0 </code></pre>
+</div>
+</div>
+</section>
+<section id="convert-order-and-ship-date-to-date-format" class="level1">
+<h1>Convert order and ship date to Date format</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>superstore <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Order Date</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">`</span><span class="at">Order Date</span><span class="st">`</span>, <span class="at">format=</span><span class="st">"%m/%d/%Y"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Ship Date</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">`</span><span class="at">Ship Date</span><span class="st">`</span>, <span class="at">format=</span><span class="st">"%m/%d/%Y"</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Sales =</span> <span class="fu">as.numeric</span>(Sales),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Profit =</span> <span class="fu">as.numeric</span>(Profit),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Discount =</span> <span class="fu">as.numeric</span>(Discount),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Quantity =</span> <span class="fu">as.integer</span>(Quantity)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-structure-of-the-data-set" class="level1">
+<h1>Checking structure of the data set</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(superstore)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [9,994 × 21] (S3: tbl_df/tbl/data.frame)
+ $ Row ID       : num [1:9994] 1 2 3 4 5 6 7 8 9 10 ...
+ $ Order ID     : chr [1:9994] "CA-2016-152156" "CA-2016-152156" "CA-2016-138688" "US-2015-108966" ...
+ $ Order Date   : Date[1:9994], format: "2016-11-08" "2016-11-08" ...
+ $ Ship Date    : Date[1:9994], format: "2016-11-11" "2016-11-11" ...
+ $ Ship Mode    : chr [1:9994] "Second Class" "Second Class" "Second Class" "Standard Class" ...
+ $ Customer ID  : chr [1:9994] "CG-12520" "CG-12520" "DV-13045" "SO-20335" ...
+ $ Customer Name: chr [1:9994] "Claire Gute" "Claire Gute" "Darrin Van Huff" "Sean O'Donnell" ...
+ $ Segment      : chr [1:9994] "Consumer" "Consumer" "Corporate" "Consumer" ...
+ $ Country      : chr [1:9994] "United States" "United States" "United States" "United States" ...
+ $ City         : chr [1:9994] "Henderson" "Henderson" "Los Angeles" "Fort Lauderdale" ...
+ $ State        : chr [1:9994] "Kentucky" "Kentucky" "California" "Florida" ...
+ $ Postal Code  : chr [1:9994] "42420" "42420" "90036" "33311" ...
+ $ Region       : chr [1:9994] "South" "South" "West" "South" ...
+ $ Product ID   : chr [1:9994] "FUR-BO-10001798" "FUR-CH-10000454" "OFF-LA-10000240" "FUR-TA-10000577" ...
+ $ Category     : chr [1:9994] "Furniture" "Furniture" "Office Supplies" "Furniture" ...
+ $ Sub-Category : chr [1:9994] "Bookcases" "Chairs" "Labels" "Tables" ...
+ $ Product Name : chr [1:9994] "Bush Somerset Collection Bookcase" "Hon Deluxe Fabric Upholstered Stacking Chairs, Rounded Back" "Self-Adhesive Address Labels for Typewriters by Universal" "Bretford CR4500 Series Slim Rectangular Table" ...
+ $ Sales        : num [1:9994] 262 731.9 14.6 957.6 22.4 ...
+ $ Quantity     : int [1:9994] 2 3 2 5 2 7 4 6 3 5 ...
+ $ Discount     : num [1:9994] 0 0 0 0.45 0.2 0 0 0.2 0.2 0 ...
+ $ Profit       : num [1:9994] 41.91 219.58 6.87 -383.03 2.52 ...</code></pre>
+</div>
+</div>
+<section id="question1-how-do-sales-and-discount-impact-profit.in-what-optimal-discount-rate-profitability-maximizes" class="level2">
+<h2 class="anchored" data-anchor-id="question1-how-do-sales-and-discount-impact-profit.in-what-optimal-discount-rate-profitability-maximizes">Question1: How do Sales and Discount impact Profit.In what optimal discount rate profitability maximizes</h2>
+<section id="approach-descriptive-statistics-and-multiple-linear-regression" class="level3">
+<h3 class="anchored" data-anchor-id="approach-descriptive-statistics-and-multiple-linear-regression">Approach: Descriptive Statistics and Multiple Linear Regression</h3>
+</section>
+<section id="compute-descriptive-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="compute-descriptive-statistics">Compute Descriptive Statistics</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(superstore <span class="sc">%&gt;%</span> <span class="fu">select</span>(Sales, Discount, Profit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sales              Discount          Profit         
+ Min.   :    0.444   Min.   :0.0000   Min.   :-6599.978  
+ 1st Qu.:   17.280   1st Qu.:0.0000   1st Qu.:    1.729  
+ Median :   54.490   Median :0.2000   Median :    8.666  
+ Mean   :  229.858   Mean   :0.1562   Mean   :   28.657  
+ 3rd Qu.:  209.940   3rd Qu.:0.2000   3rd Qu.:   29.364  
+ Max.   :22638.480   Max.   :0.8000   Max.   : 8399.976  </code></pre>
+</div>
+</div>
+</section>
+<section id="standard-deviation-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="standard-deviation-calculation">Standard deviation calculation</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(superstore<span class="sc">$</span>Sales, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 623.2451</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(superstore<span class="sc">$</span>Discount, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.206452</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(superstore<span class="sc">$</span>Profit, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 234.2601</code></pre>
+</div>
+</div>
+</section>
+<section id="build-regression-model" class="level3">
+<h3 class="anchored" data-anchor-id="build-regression-model">Build Regression Model</h3>
+<p>(James et al., 2021)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>profit_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Profit <span class="sc">~</span> Sales <span class="sc">+</span> Discount <span class="sc">+</span> Category, <span class="at">data =</span> superstore)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(profit_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Profit ~ Sales + Discount + Category, data = superstore)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7284.9   -29.0     7.4    23.3  5187.7 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)             -1.498e+01  4.785e+00  -3.130  0.00175 ** 
+Sales                    1.820e-01  3.278e-03  55.529  &lt; 2e-16 ***
+Discount                -2.300e+02  9.663e+00 -23.803  &lt; 2e-16 ***
+CategoryOffice Supplies  4.976e+01  5.083e+00   9.790  &lt; 2e-16 ***
+CategoryTechnology       4.176e+01  6.353e+00   6.573 5.18e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 199 on 9989 degrees of freedom
+Multiple R-squared:  0.279, Adjusted R-squared:  0.2787 
+F-statistic: 966.3 on 4 and 9989 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="q1.a-impact-of-sales-discount-on-profit" class="level3">
+<h3 class="anchored" data-anchor-id="q1.a-impact-of-sales-discount-on-profit">Q1.a Impact of Sales &amp; Discount on Profit</h3>
+</section>
+<section id="calculate-r²-value-and-visualize-plot" class="level3">
+<h3 class="anchored" data-anchor-id="calculate-r²-value-and-visualize-plot">Calculate R² value and Visualize plot</h3>
+<p>(Wickham, 2016)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>r_squared <span class="ot">&lt;-</span> <span class="fu">summary</span>(profit_model)<span class="sc">$</span>r.squared</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(superstore, <span class="fu">aes</span>(<span class="at">x =</span> Sales, <span class="at">y =</span> Profit, <span class="at">color =</span> Discount)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span>  </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"blue"</span>, <span class="at">high =</span> <span class="st">"darkred"</span>) <span class="sc">+</span>  </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Impact of Sales and Discount on Profit"</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Sales ($)"</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Profit ($)"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Discount Rate"</span>) <span class="sc">+</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">max</span>(superstore<span class="sc">$</span>Sales) <span class="sc">*</span> <span class="fl">0.7</span>, <span class="at">y =</span> <span class="fu">min</span>(superstore<span class="sc">$</span>Profit) <span class="sc">*</span> <span class="fl">0.8</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"R² = "</span>, <span class="fu">round</span>(r_squared, <span class="dv">3</span>)), <span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="q1.b-discount-vs.-profit-graph" class="level3">
+<h3 class="anchored" data-anchor-id="q1.b-discount-vs.-profit-graph">Q1.b Discount vs.&nbsp;Profit Graph</h3>
+</section>
+<section id="create-discount-categories-low-moderate-high" class="level3">
+<h3 class="anchored" data-anchor-id="create-discount-categories-low-moderate-high">Create Discount Categories (Low, Moderate, High)</h3>
+<p>(Tukey, 1977; Wickham, 2016)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>superstore <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Discount_Category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    Discount <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Low"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    Discount <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> Discount <span class="sc">&lt;=</span> <span class="fl">0.3</span> <span class="sc">~</span> <span class="st">"Moderate"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    Discount <span class="sc">&gt;</span> <span class="fl">0.3</span> <span class="sc">~</span> <span class="st">"High"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(superstore, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(Discount_Category, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Moderate"</span>, <span class="st">"High"</span>)), </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> Profit, <span class="at">fill =</span> Discount_Category)) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span>  <span class="co"># Violin for distribution</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span>  <span class="co"># Boxplot for precision</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span>  <span class="co"># Jitter for data points</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Impact of Discount on Profit"</span>,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Profit distribution across discount levels"</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Discount Level"</span>,</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Profit"</span>) <span class="sc">+</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>, <span class="at">face =</span> <span class="st">"italic"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="q1.c-optimal-discount-rate-plot" class="level3">
+<h3 class="anchored" data-anchor-id="q1.c-optimal-discount-rate-plot">Q1.c Optimal Discount Rate Plot</h3>
+</section>
+<section id="finding-optimal-discount-range" class="level3">
+<h3 class="anchored" data-anchor-id="finding-optimal-discount-range">Finding Optimal Discount Range</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>optimal_discount <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Discount) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Avg_Profit =</span> <span class="fu">mean</span>(Profit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plotting-the-graph-of-the-optimal-discount-rate" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-the-graph-of-the-optimal-discount-rate">Plotting the graph of the Optimal Discount Rate</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(optimal_discount, <span class="fu">aes</span>(<span class="at">x =</span> Discount, <span class="at">y =</span> Avg_Profit)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span>  <span class="co"># Smooth trendline</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span>  <span class="co"># Break-even line</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">0.1</span>, <span class="at">y =</span> <span class="fu">max</span>(optimal_discount<span class="sc">$</span>Avg_Profit) <span class="sc">*</span> <span class="fl">1.3</span>, </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Max Profit at Lowest Discount"</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Optimal Discount Rate for Maximizing Profit"</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Identifying the best discount levels for profitability"</span>,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Discount Rate"</span>,</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Average Profit"</span>) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="analysis" class="level1">
+<h1>Analysis</h1>
+<p>Did descriptive statistics for Sales, Discount, and Profit to understand their variability and distribution.Then built a Multiple Linear Regression Model to investigate how Sales and Discount affect Profit.Visualized results using scatter plots, boxplots, and trendlines.</p>
+</section>
+<section id="insights" class="level1">
+<h1>Insights</h1>
+<p>Higher sales usually translate into higher profits; however, deep discounts can reduce overall profitability. Discounts of more than 40% lead to negative profits, which mean an unprofitable strategy. The R² of 0.279 means that Sales and Discounts explain about 28% of the variation in profit, and it implies that there are other factors involved.</p>
+</section>
+<section id="business-impact" class="level1">
+<h1>Business Impact</h1>
+<p>Companies should hold back from extreme discounting and look for other promotion channels to maintain their profitability. Consider using focused discount programs for particular customer segments rather than giving blanket discounts.</p>
+<section id="question-2-forecasting-future-sales-trends-based-on-historical-data.-analyzing-seasonal-patterns-exist-in-sales" class="level2">
+<h2 class="anchored" data-anchor-id="question-2-forecasting-future-sales-trends-based-on-historical-data.-analyzing-seasonal-patterns-exist-in-sales">Question 2: Forecasting future sales trends based on historical data. Analyzing seasonal patterns exist in sales</h2>
+<section id="approach-time-series-decomposition" class="level3">
+<h3 class="anchored" data-anchor-id="approach-time-series-decomposition">Approach: Time-Series Decomposition</h3>
+</section>
+<section id="q2.a" class="level3">
+<h3 class="anchored" data-anchor-id="q2.a">Q2.a</h3>
+</section>
+<section id="aggregate-monthly-sales-data" class="level3">
+<h3 class="anchored" data-anchor-id="aggregate-monthly-sales-data">Aggregate Monthly Sales Data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>superstore_monthly <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">YearMonth =</span> <span class="fu">floor_date</span>(<span class="st">`</span><span class="at">Order Date</span><span class="st">`</span>, <span class="st">"month"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(YearMonth) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">TotalSales =</span> <span class="fu">sum</span>(Sales, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(superstore_monthly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  YearMonth  TotalSales
+  &lt;date&gt;          &lt;dbl&gt;
+1 2014-01-01     14237.
+2 2014-02-01      4520.
+3 2014-03-01     55691.
+4 2014-04-01     28295.
+5 2014-05-01     23648.
+6 2014-06-01     34595.</code></pre>
+</div>
+</div>
+</section>
+<section id="plot-historical-sales-trend" class="level3">
+<h3 class="anchored" data-anchor-id="plot-historical-sales-trend">Plot Historical Sales Trend</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(superstore_monthly, <span class="fu">aes</span>(<span class="at">x =</span> YearMonth, <span class="at">y =</span> TotalSales)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Historical Sales Trend"</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Total Sales"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="q2.b" class="level3">
+<h3 class="anchored" data-anchor-id="q2.b">Q2.b</h3>
+</section>
+<section id="convert-to-time-series-format" class="level3">
+<h3 class="anchored" data-anchor-id="convert-to-time-series-format">Convert to time series format</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sales_ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(superstore_monthly<span class="sc">$</span>TotalSales, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2014</span>,<span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="decompose-time-series" class="level3">
+<h3 class="anchored" data-anchor-id="decompose-time-series">Decompose time series</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>decomp <span class="ot">&lt;-</span> <span class="fu">stl</span>(sales_ts, <span class="at">s.window =</span> <span class="st">"periodic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="convert-decomposition-output-to-dataframe" class="level3">
+<h3 class="anchored" data-anchor-id="convert-decomposition-output-to-dataframe">Convert decomposition output to dataframe</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>decomp_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(decomp<span class="sc">$</span>time.series)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>decomp_data<span class="sc">$</span>Time <span class="ot">&lt;-</span> <span class="fu">time</span>(sales_ts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-raw-data-trend-and-seasonality" class="level3">
+<h3 class="anchored" data-anchor-id="plot-raw-data-trend-and-seasonality">Plot Raw Data, Trend, and Seasonality</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(decomp_data, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> sales_ts)) <span class="sc">+</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Raw Sales Data"</span>, <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Sales"</span>) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(decomp_data, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> trend)) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Trend Component"</span>, <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Sales"</span>) <span class="sc">+</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(decomp_data, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> seasonal)) <span class="sc">+</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.8</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Seasonal Component"</span>, <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Sales"</span>) <span class="sc">+</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="arrange-plots-without-remainder-using-patchwork" class="level3">
+<h3 class="anchored" data-anchor-id="arrange-plots-without-remainder-using-patchwork">Arrange plots without remainder using patchwork</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2 <span class="sc">/</span> p3 <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Don't know how to automatically pick scale for object of type &lt;ts&gt;. Defaulting
+to continuous.
+Don't know how to automatically pick scale for object of type &lt;ts&gt;. Defaulting
+to continuous.
+Don't know how to automatically pick scale for object of type &lt;ts&gt;. Defaulting
+to continuous.
+Don't know how to automatically pick scale for object of type &lt;ts&gt;. Defaulting
+to continuous.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="q2.c" class="level3">
+<h3 class="anchored" data-anchor-id="q2.c">Q2.c</h3>
+</section>
+<section id="fit-arima-model" class="level3">
+<h3 class="anchored" data-anchor-id="fit-arima-model">Fit ARIMA model</h3>
+<p>(Hyndman &amp; Athanasopoulos, 2021), (Akaike, 1974)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>arima_model <span class="ot">&lt;-</span> <span class="fu">auto.arima</span>(sales_ts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="forecast-the-next-6-months" class="level3">
+<h3 class="anchored" data-anchor-id="forecast-the-next-6-months">Forecast the next 6 months</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>forecast_sales <span class="ot">&lt;-</span> <span class="fu">forecast</span>(arima_model, <span class="at">h =</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-the-forecast" class="level3">
+<h3 class="anchored" data-anchor-id="plot-the-forecast">Plot the forecast</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(forecast_sales) <span class="sc">+</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sales Forecast for Next 6 Months"</span>,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Predictions with confidence intervals"</span>,</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Predicted Sales"</span>) <span class="sc">+</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="analysis-1" class="level1">
+<h1>Analysis</h1>
+<p>Computed monthly sales figures and decomposed trends with STL decomposition. Built an ARIMA model to forecast sales for the coming 6 months. Plotted historical trends, seasonal trends, and future sales forecasts.</p>
+</section>
+<section id="insights-1" class="level1">
+<h1>Insights</h1>
+<p>Sales demonstrate trends that vary according to seasons, with greater quantities in specific months largely due to holidays or promotions. The forecast indicates that sales will increase gradually, but fluctuations indicate that external factors influence demand.</p>
+</section>
+<section id="business-impact-1" class="level1">
+<h1>Business Impact</h1>
+<p>Better inventory planning to prevent overstocking or shortages.Aids companies in matching advertising campaigns with periods of peak demand.</p>
+<section id="question3-analyzing-the-delivery-time-performance" class="level2">
+<h2 class="anchored" data-anchor-id="question3-analyzing-the-delivery-time-performance">Question3: Analyzing the delivery time performance</h2>
+<section id="approach-classification-based-on-logistic-regression" class="level3">
+<h3 class="anchored" data-anchor-id="approach-classification-based-on-logistic-regression">Approach: Classification based on Logistic Regression</h3>
+</section>
+<section id="create-new-column-for-delivery-days" class="level3">
+<h3 class="anchored" data-anchor-id="create-new-column-for-delivery-days">Create new column for Delivery Days</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>superstore <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">Delivery_Days =</span> <span class="fu">as.numeric</span>(<span class="st">`</span><span class="at">Ship Date</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Order Date</span><span class="st">`</span>))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the change</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(superstore<span class="sc">$</span>Delivery_Days)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   3.000   4.000   3.958   5.000   7.000 </code></pre>
+</div>
+</div>
+</section>
+<section id="define-threshold-for-delayed-deliveries" class="level3">
+<h3 class="anchored" data-anchor-id="define-threshold-for-delayed-deliveries">Define threshold for delayed deliveries</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>superstore <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Delivery_Status =</span> <span class="fu">ifelse</span>(Delivery_Days <span class="sc">&gt;</span> <span class="dv">2</span>, <span class="st">"Delayed"</span>, <span class="st">"On-time"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="check-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="check-distribution">Check distribution</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(superstore<span class="sc">$</span>Delivery_Status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Delayed On-time 
+   7772    2222 </code></pre>
+</div>
+</div>
+</section>
+<section id="grouping-delivery-time-by-region-ship-mode" class="level3">
+<h3 class="anchored" data-anchor-id="grouping-delivery-time-by-region-ship-mode">Grouping delivery time by Region &amp; Ship Mode</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>delivery_summary <span class="ot">&lt;-</span> superstore <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Region, <span class="st">`</span><span class="at">Ship Mode</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Average_Delivery_Days =</span> <span class="fu">mean</span>(Delivery_Days, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">Delayed_Percentage =</span> <span class="fu">mean</span>(Delivery_Status <span class="sc">==</span> <span class="st">"Delayed"</span>) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Region'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+<section id="display-summary" class="level3">
+<h3 class="anchored" data-anchor-id="display-summary">Display summary</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(delivery_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 4
+# Groups:   Region [4]
+   Region  `Ship Mode`    Average_Delivery_Days Delayed_Percentage
+   &lt;chr&gt;   &lt;chr&gt;                          &lt;dbl&gt;              &lt;dbl&gt;
+ 1 Central First Class                   2.32                 50.5
+ 2 Central Same Day                      0.0333                0  
+ 3 Central Second Class                  3.33                 61.7
+ 4 Central Standard Class                4.99                100  
+ 5 East    First Class                   2.22                 39.4
+ 6 East    Same Day                      0                     0  
+ 7 East    Second Class                  3.27                 62.3
+ 8 East    Standard Class                4.97                100  
+ 9 South   First Class                   2.11                 38.5
+10 South   Same Day                      0.0120                0  
+11 South   Second Class                  3.19                 63.8
+12 South   Standard Class                5.00                100  
+13 West    First Class                   2.10                 36.9
+14 West    Same Day                      0.103                 0  
+15 West    Second Class                  3.17                 56.8
+16 West    Standard Class                5.06                100  </code></pre>
+</div>
+</div>
+</section>
+<section id="convert-categorical-variables-to-factors" class="level3">
+<h3 class="anchored" data-anchor-id="convert-categorical-variables-to-factors">Convert categorical variables to factors</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>superstore<span class="sc">$</span>Region <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(superstore<span class="sc">$</span>Region)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>superstore<span class="sc">$</span><span class="st">`</span><span class="at">Ship Mode</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(superstore<span class="sc">$</span><span class="st">`</span><span class="at">Ship Mode</span><span class="st">`</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>superstore<span class="sc">$</span>Delivery_Status <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(superstore<span class="sc">$</span>Delivery_Status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="logistic-regression-model" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-model">Logistic Regression Model</h3>
+<p>(Friedman, Hastie, &amp; Tibshirani, 2022)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>logistic_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Delivery_Status <span class="sc">~</span> Region <span class="sc">+</span> <span class="st">`</span><span class="at">Ship Mode</span><span class="st">`</span> <span class="sc">+</span> Delivery_Days,</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> superstore, <span class="at">family =</span> binomial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: algorithm did not converge</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+</div>
+</div>
+</section>
+<section id="model-summary" class="level3">
+<h3 class="anchored" data-anchor-id="model-summary">Model Summary</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Delivery_Status ~ Region + `Ship Mode` + Delivery_Days, 
+    family = binomial, data = superstore)
+
+Coefficients:
+                            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)                1.151e+02  7.433e+03   0.015    0.988
+RegionEast                -8.136e-01  3.555e+03   0.000    1.000
+RegionSouth               -1.727e-01  4.043e+03   0.000    1.000
+RegionWest                 3.725e-02  3.429e+03   0.000    1.000
+`Ship Mode`Same Day       -4.651e+01  1.139e+04  -0.004    0.997
+`Ship Mode`Second Class    4.551e-01  2.421e+03   0.000    1.000
+`Ship Mode`Standard Class  5.327e+00  4.962e+03   0.001    0.999
+Delivery_Days             -4.596e+01  2.583e+03  -0.018    0.986
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1.0591e+04  on 9993  degrees of freedom
+Residual deviance: 5.6549e-07  on 9986  degrees of freedom
+AIC: 16
+
+Number of Fisher Scoring iterations: 25</code></pre>
+</div>
+</div>
+</section>
+<section id="visualization-of-the-graph-by-regions" class="level3">
+<h3 class="anchored" data-anchor-id="visualization-of-the-graph-by-regions">Visualization of the graph by regions</h3>
+<p>(Silverman, 1986)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(superstore, <span class="fu">aes</span>(<span class="at">x =</span> Region, <span class="at">fill =</span> Delivery_Status)) <span class="sc">+</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> <span class="st">`</span><span class="at">Ship Mode</span><span class="st">`</span>) <span class="sc">+</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"On-time"</span> <span class="ot">=</span> <span class="st">"darkgreen"</span>, <span class="st">"Delayed"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span>  <span class="co"># Custom Colors</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportion of Delayed Deliveries by Region &amp; Ship Mode"</span>,</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Region"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>, <span class="at">fill =</span> <span class="st">"Delivery Status"</span>) <span class="sc">+</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(superstore, <span class="fu">aes</span>(<span class="at">x =</span> Delivery_Days, <span class="at">fill =</span> Delivery_Status)) <span class="sc">+</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"On-time"</span> <span class="ot">=</span> <span class="st">"darkgreen"</span>, <span class="st">"Delayed"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span>  <span class="co"># Custom Colors</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Graph of Delivery Time (Density Plot)"</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Delivery Days"</span>, <span class="at">y =</span> <span class="st">"Density"</span>, <span class="at">fill =</span> <span class="st">"Delivery Status"</span>) <span class="sc">+</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Retail-Data-Analysis-R_files/figure-html/unnamed-chunk-35-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="analysis-2" class="level1">
+<h1>Analysis</h1>
+<p>Calculated delivery time per order and categorized them as On-time or Delayed. Built a Logistic Regression Model to predict delays based on the nature of the shipment and region. Used bar charts and density plots to examine delay patterns.</p>
+</section>
+<section id="insights-2" class="level1">
+<h1>Insights</h1>
+<p>Standard Class parcels have the highest incidence of delays, followed closely by Second Class. Central and West regions experience more delays, likely due to logistics constraints. Products using expedited shipping services, like Same-Day and First Class, suffer only slight delays.</p>
+</section>
+<section id="business-impact-2" class="level1">
+<h1>Business Impact</h1>
+<p>Organizations should improve logistical channels and prioritize faster shipping in regions with extensive delays. Shipments classified as Standard Class can require greater coordination between suppliers to maximize delivery schedules.</p>
+<section id="business-recommendation" class="level2">
+<h2 class="anchored" data-anchor-id="business-recommendation">Business Recommendation</h2>
+<section id="profitability-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="profitability-strategy">Profitability Strategy</h3>
+<p>Don’t offer discounts larger than 40% as it will lead to losses. Offer discounts cautiously to certain segments of customers rather than reducing prices for all.</p>
+</section>
+<section id="sales-demand-forecasting" class="level3">
+<h3 class="anchored" data-anchor-id="sales-demand-forecasting">Sales &amp; Demand Forecasting</h3>
+<p>Sales increase at some periods, so marketing must coincide with the demand cycles. Plan inventory to avoid understocking during peak months and overstocking in slow months.</p>
+</section>
+<section id="improvement-in-delivery-and-logistics" class="level3">
+<h3 class="anchored" data-anchor-id="improvement-in-delivery-and-logistics">Improvement in Delivery and Logistics</h3>
+<p>Improve delivery logistics to minimize delays in the West and Central regions. Inform customers to select First Class or Same Day shipping for quicker orders. Collaborate with suppliers to accelerate Standard Class shipping.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>The analysis demonstrates the ability of data-driven approaches to identify important insights that enable effective decision-making. Utilizing methods like forecasting, regression, and classification, important trends have been identified that help streamline operational processes, enhance customer interactions, and maximize overall efficiency. The findings emphasize the importance of using analytics to drive strategic improvements and deliver better outcomes.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

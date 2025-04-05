@@ -1,0 +1,410 @@
+---
+title: " Retail Data Analysis and Business Insights Using R "
+author: "Neha"
+format: html
+---
+## Introduction
+This analysis explores key business insights using the Superstore Sales Dataset. The approach includes data preprocessing, exploratory analysis, predictive modeling, and visualization to extract meaningful patterns. Key focus areas include profitability analysis, sales forecasting, and delivery performance evaluation. Using multiple linear regression, ARIMA and logistic regression, we derive actionable insights to optimize pricing, improve demand planning, refine customer targeting, and enhance delivery efficiency.
+
+## Approach
+Mermaid flowchart
+```{mermaid}
+graph TD;
+A[Start] --> B[Load Required Libraries]
+    B --> C[Read Dataset - Superstore.csv]
+    C --> D[Data Preprocessing:Convert Dates,Handle Missing Values]
+    
+    %% Four Key Analysis Questions after Preprocessing
+    D --> Q1[Impact of Sales & Discount on Profit]
+    Q1 --> Q1a[Descriptive Statistics]
+    Q1a --> Q1b[Multiple Linear Regression]
+    Q1b --> Q1c[Visualizations: Scatter Plot, Boxplot, Trendline]
+
+    D --> Q2[Sales Forecasting]
+    Q2 --> Q2a[Aggregate Monthly Sales]
+    Q2a --> Q2b[Time-Series Decomposition]
+    Q2b --> Q2c[ARIMA Model Forecasting]
+    Q2c --> Q2d[Plot Forecast & Trends]
+    
+    D --> Q4[Delivery Time Performance]
+    Q4 --> Q4a[Calculate Delivery Days]
+    Q4a --> Q4b[Define Delayed vs On-Time]
+    Q4b --> Q4c[Logistic Regression]
+    Q4c --> Q4d[Visualization: Bar Chart, Density Plot]
+
+    %% Business Insights After All Analyses
+    Q1c --> I[Business Insights & Recommendations]
+    Q2d --> I
+    Q4d --> I
+
+ 
+    I --> J[End]
+
+```
+
+## Dataset Overview
+The "Superstore" dataset is chosen because it represents real-world retail sales data, allowing us to analyze profitability, sales trends, and delivery performance.These insights are essential for businesses to optimize pricing strategies, improve marketing efforts, enhance logistics efficiency, and drive better decision-making.
+
+Datasetlink: [Superstore Dataset on Kaggle](https://www.kaggle.com/datasets/vivek468/superstore-dataset-final)
+
+# Loading required libraries
+```{r setup ,message=FALSE,warning=FALSE}
+
+library(tidyverse) # Data manipulation & visualization
+library(readr)     # For reading CSV files
+library(lubridate) # For handling dates
+library(ggplot2)   # Data visualization
+library(dplyr)     # Data visualization
+library(ggpubr)    # For advanced visualizations
+library(forecast)  # Time series forecasting
+library(patchwork) # For arranging multiple plots
+```
+
+# Reading the dataset (CSV file)
+```{r}
+  superstore <- read_csv("C:/Users/Neha/Downloads/resume folder/Retail-Data-Analysis-R/Sample - Superstore for R.csv")
+
+```
+
+# View first few rows  
+```{r}  
+head(superstore)
+```
+
+# Check column names
+```{r}
+colnames(superstore)
+```
+
+# Check summary statistics
+```{r}
+summary(superstore)
+```
+## Data Preprocessing
+Handling Missing Values, Converting Dates (Order Date, Ship Date). Creating columns for delivery days, categorizing discounts, etc.
+
+# Check for missing values
+```{r}
+colSums(is.na(superstore))
+```
+
+# Convert order and ship date to Date format
+```{r}
+superstore <- superstore %>%
+  mutate(
+    `Order Date` = as.Date(`Order Date`, format="%m/%d/%Y"),
+    `Ship Date` = as.Date(`Ship Date`, format="%m/%d/%Y"),
+    Sales = as.numeric(Sales),
+    Profit = as.numeric(Profit),
+    Discount = as.numeric(Discount),
+    Quantity = as.integer(Quantity)
+  )
+```
+
+# Checking structure of the data set
+```{r}
+str(superstore)
+```
+
+## Question1: How do Sales and Discount impact Profit.In what optimal discount rate profitability maximizes 
+### Approach: Descriptive Statistics and Multiple Linear Regression 
+
+### Compute Descriptive Statistics
+```{r}
+summary(superstore %>% select(Sales, Discount, Profit))
+```
+### Standard deviation calculation
+```{r}
+sd(superstore$Sales, na.rm=TRUE)
+sd(superstore$Discount, na.rm=TRUE)
+sd(superstore$Profit, na.rm=TRUE)
+```
+
+### Build Regression Model
+(James et al., 2021)
+```{r}
+profit_model <- lm(Profit ~ Sales + Discount + Category, data = superstore)
+summary(profit_model)
+```
+
+### Q1.a Impact of Sales & Discount on Profit
+
+### Calculate R² value and Visualize plot
+(Wickham, 2016)
+```{r}
+r_squared <- summary(profit_model)$r.squared
+
+ggplot(superstore, aes(x = Sales, y = Profit, color = Discount)) +
+  geom_point(alpha = 0.7, size = 1.5) +  
+  geom_smooth(method = "lm", se = FALSE, color = "black", linewidth = 1.2) +
+  scale_color_gradient(low = "blue", high = "darkred") +  
+  labs(title = "Impact of Sales and Discount on Profit",
+       x = "Sales ($)",
+       y = "Profit ($)",
+       color = "Discount Rate") +
+  annotate("text", x = max(superstore$Sales) * 0.7, y = min(superstore$Profit) * 0.8,
+           label = paste0("R² = ", round(r_squared, 3)), size = 5, color = "black") +
+  theme_minimal()
+```
+
+### Q1.b Discount vs. Profit Graph
+
+### Create Discount Categories (Low, Moderate, High)
+(Tukey, 1977; Wickham, 2016)
+```{r}
+superstore <- superstore %>%
+  mutate(Discount_Category = case_when(
+    Discount == 0 ~ "Low",
+    Discount > 0 & Discount <= 0.3 ~ "Moderate",
+    Discount > 0.3 ~ "High"
+  ))
+
+ggplot(superstore, aes(x = factor(Discount_Category, levels = c("Low", "Moderate", "High")), 
+                       y = Profit, fill = Discount_Category)) +
+  geom_violin(alpha = 0.5, color = "black") +  # Violin for distribution
+  geom_boxplot(width = 0.1, color = "black", outlier.shape = NA) +  # Boxplot for precision
+  geom_jitter(width = 0.2, alpha = 0.5, color = "darkgreen") +  # Jitter for data points
+  labs(title = "Impact of Discount on Profit",
+       subtitle = "Profit distribution across discount levels",
+       x = "Discount Level",
+       y = "Profit") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 14),
+        plot.subtitle = element_text(size = 10, face = "italic"))
+```
+
+### Q1.c Optimal Discount Rate Plot
+
+### Finding Optimal Discount Range
+```{r}
+optimal_discount <- superstore %>%
+  group_by(Discount) %>%
+  summarise(Avg_Profit = mean(Profit, na.rm = TRUE))
+```
+
+### Plotting the graph of the Optimal Discount Rate
+```{r}
+ggplot(optimal_discount, aes(x = Discount, y = Avg_Profit)) +
+  geom_line(color = "darkgreen", linewidth = 1) +
+  geom_point(color = "red", size = 3) +
+  geom_smooth(method = "loess", se = FALSE, color = "black", linetype = "dashed") +  # Smooth trendline
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +  # Break-even line
+  annotate("text", x = 0.1, y = max(optimal_discount$Avg_Profit) * 1.3, 
+           label = "Max Profit at Lowest Discount", size = 2, color = "black") +
+  labs(title = "Optimal Discount Rate for Maximizing Profit",
+       subtitle = "Identifying the best discount levels for profitability",
+       x = "Discount Rate",
+       y = "Average Profit") +
+  theme_minimal()
+```
+# Analysis
+Did descriptive statistics for Sales, Discount, and Profit to understand their variability and distribution.Then built a Multiple Linear Regression Model to investigate how Sales and Discount affect Profit.Visualized results using scatter plots, boxplots, and trendlines.
+
+# Insights
+Higher sales usually translate into higher profits; however, deep discounts can reduce overall profitability.
+Discounts of more than 40% lead to negative profits, which mean an unprofitable strategy.
+The R² of 0.279 means that Sales and Discounts explain about 28% of the variation in profit, and it implies that there are other factors involved.
+
+# Business Impact
+Companies should hold back from extreme discounting and look for other promotion channels to maintain their profitability. Consider using focused discount programs for particular customer segments rather than giving blanket discounts.
+
+## Question 2: Forecasting future sales trends based on historical data. Analyzing seasonal patterns exist in sales 
+### Approach: Time-Series Decomposition
+
+### Q2.a    
+
+### Aggregate Monthly Sales Data
+```{r}
+superstore_monthly <- superstore %>%
+  mutate(YearMonth = floor_date(`Order Date`, "month")) %>%
+  group_by(YearMonth) %>%
+  summarise(TotalSales = sum(Sales, na.rm = TRUE))
+```
+
+### Results
+```{r}
+head(superstore_monthly)
+```
+
+### Plot Historical Sales Trend
+```{r}
+ggplot(superstore_monthly, aes(x = YearMonth, y = TotalSales)) +
+  geom_line(color = "blue", size = 1) +
+  geom_smooth(method = "loess", color = "black", se = FALSE) +
+  labs(title = "Historical Sales Trend",
+       x = "Time",
+       y = "Total Sales") +
+  theme_minimal()
+```
+
+### Q2.b
+
+### Convert to time series format
+```{r}
+sales_ts <- ts(superstore_monthly$TotalSales, start = c(2014,1), frequency = 12)
+```
+
+### Decompose time series
+```{r}
+decomp <- stl(sales_ts, s.window = "periodic")
+```
+
+### Convert decomposition output to dataframe
+```{r}
+decomp_data <- as.data.frame(decomp$time.series)
+decomp_data$Time <- time(sales_ts)
+```
+
+### Plot Raw Data, Trend, and Seasonality 
+```{r}
+p1 <- ggplot(decomp_data, aes(x = Time, y = sales_ts)) +
+  geom_line(color = "black", size = 0.8) +
+  labs(title = "Raw Sales Data", x = "Year", y = "Sales") +
+  theme_minimal()
+
+p2 <- ggplot(decomp_data, aes(x = Time, y = trend)) +
+  geom_line(color = "black", size = 0.8) +
+  labs(title = "Trend Component", x = "Year", y = "Sales") +
+  theme_minimal()
+
+p3 <- ggplot(decomp_data, aes(x = Time, y = seasonal)) +
+  geom_line(color = "red", size = 0.8, linetype = "dashed") +
+  labs(title = "Seasonal Component", x = "Year", y = "Sales") +
+  theme_minimal()
+```
+
+### Arrange plots without remainder using patchwork
+```{r}
+library(patchwork)
+p1 / p2 / p3 + plot_layout(ncol = 1)
+```
+
+### Q2.c
+
+### Fit ARIMA model 
+(Hyndman & Athanasopoulos, 2021), (Akaike, 1974)
+```{r}
+arima_model <- auto.arima(sales_ts)
+```
+
+### Forecast the next 6 months
+```{r}
+forecast_sales <- forecast(arima_model, h = 6)
+```
+
+### Plot the forecast
+```{r}
+autoplot(forecast_sales) +
+  labs(title = "Sales Forecast for Next 6 Months",
+       subtitle = "Predictions with confidence intervals",
+       x = "Time",
+       y = "Predicted Sales") +
+  theme_minimal()
+```
+# Analysis
+Computed monthly sales figures and decomposed trends with STL decomposition. Built an ARIMA model to forecast sales for the coming 6 months. Plotted historical trends, seasonal trends, and future sales forecasts.
+
+# Insights
+Sales demonstrate trends that vary according to seasons, with greater quantities in specific months largely due to holidays or promotions.
+The forecast indicates that sales will increase gradually, but fluctuations indicate that external factors influence demand.
+
+# Business Impact
+Better inventory planning to prevent overstocking or shortages.Aids companies in matching advertising campaigns with periods of peak demand.
+
+## Question3: Analyzing the delivery time performance
+### Approach: Classification based on Logistic Regression
+
+### Create new column for Delivery Days
+```{r}
+superstore <- superstore %>%
+  mutate( Delivery_Days = as.numeric(`Ship Date` - `Order Date`))
+# Verify the change
+summary(superstore$Delivery_Days)
+```
+
+### Define threshold for delayed deliveries
+```{r}
+superstore <- superstore %>%
+  mutate(Delivery_Status = ifelse(Delivery_Days > 2, "Delayed", "On-time"))
+```
+
+### Check distribution
+```{r}
+table(superstore$Delivery_Status)
+```
+
+### Grouping delivery time by Region & Ship Mode
+```{r}
+delivery_summary <- superstore %>%
+  group_by(Region, `Ship Mode`) %>%
+  summarise(Average_Delivery_Days = mean(Delivery_Days, na.rm = TRUE),
+            Delayed_Percentage = mean(Delivery_Status == "Delayed") * 100)
+```
+
+### Display summary
+```{r}
+print(delivery_summary)
+```
+
+### Convert categorical variables to factors
+```{r}
+superstore$Region <- as.factor(superstore$Region)
+superstore$`Ship Mode` <- as.factor(superstore$`Ship Mode`)
+superstore$Delivery_Status <- as.factor(superstore$Delivery_Status)
+```
+
+### Logistic Regression Model
+(Friedman, Hastie, & Tibshirani, 2022)
+```{r}
+logistic_model <- glm(Delivery_Status ~ Region + `Ship Mode` + Delivery_Days,
+                      data = superstore, family = binomial)
+```
+
+### Model Summary
+```{r}
+summary(logistic_model)
+```
+### Visualization of the graph by regions
+(Silverman, 1986)
+```{r}
+ggplot(superstore, aes(x = Region, fill = Delivery_Status)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ `Ship Mode`) +
+  scale_fill_manual(values = c("On-time" = "darkgreen", "Delayed" = "red")) +  # Custom Colors
+  labs(title = "Proportion of Delayed Deliveries by Region & Ship Mode",
+       x = "Region", y = "Proportion", fill = "Delivery Status") +
+  theme_minimal()
+
+ggplot(superstore, aes(x = Delivery_Days, fill = Delivery_Status)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("On-time" = "darkgreen", "Delayed" = "red")) +  # Custom Colors
+  labs(title = "Graph of Delivery Time (Density Plot)",
+       x = "Delivery Days", y = "Density", fill = "Delivery Status") +
+  theme_minimal()
+```
+
+# Analysis
+Calculated delivery time per order and categorized them as On-time or Delayed. Built a Logistic Regression Model to predict delays based on the nature of the shipment and region. Used bar charts and density plots to examine delay patterns.
+
+# Insights
+Standard Class parcels have the highest incidence of delays, followed closely by Second Class.
+Central and West regions experience more delays, likely due to logistics constraints.
+Products using expedited shipping services, like Same-Day and First Class, suffer only slight delays.
+
+# Business Impact
+Organizations should improve logistical channels and prioritize faster shipping in regions with extensive delays. Shipments classified as Standard Class can require greater coordination between suppliers to maximize delivery schedules.
+
+## Business Recommendation
+
+### Profitability Strategy
+Don't offer discounts larger than 40% as it will lead to losses. Offer discounts cautiously to certain segments of customers rather than reducing prices for all.
+
+### Sales & Demand Forecasting
+Sales increase at some periods, so marketing must coincide with the demand cycles. Plan inventory to avoid understocking during peak months and overstocking in slow months.
+
+### Improvement in Delivery and Logistics
+Improve delivery logistics to minimize delays in the West and Central regions. Inform customers to select First Class or Same Day shipping for quicker orders. Collaborate with suppliers to accelerate Standard Class shipping.
+
+## Conclusion
+The analysis demonstrates the ability of data-driven approaches to identify important insights that enable effective decision-making. Utilizing methods like forecasting, regression, and classification, important trends have been identified that help streamline operational processes, enhance customer interactions, and maximize overall efficiency. The findings emphasize the importance of using analytics to drive strategic improvements and deliver better outcomes.
