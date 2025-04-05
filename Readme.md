@@ -38,11 +38,11 @@ Logistic Regression - Classify whether a delivery will be on-time or delayed
 ## File Structure
 
 
-Retail-Data-Analysis-R/
-├── Retail_Data_Analysis_Report.qmd       # Quarto file with code + markdown
-├── superstore.csv                        # Cleaned dataset used for analysis
-├── Retail-Data-Analysis-R.html           # Rendered HTML report 
-└── README.md                             # This documentation file
+Retail-Data-Analysis-R
+Retail_Data_Analysis_Report.qmd       # Quarto file with code + markdown
+superstore.csv                        # Cleaned dataset used for analysis
+Retail-Data-Analysis-R.html           # Rendered HTML report 
+README.md                             # This documentation file
 
 
 ## Author
